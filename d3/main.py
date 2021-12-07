@@ -97,6 +97,8 @@ def filter( numbers, criteria, position ):
         if int( number[position]) == criteria:
             filtered.append( number )
 
+    print( filtered )
+
     return filtered
 
 
@@ -133,21 +135,23 @@ def calcRate(numbers, method):
     return resultString
             
 
-f = open("input.txt", "r")
+f = open("testinput.txt", "r")
 lines = f.readlines()
 data = processData( lines )
 
 
-gammaRate = int( calcRate(data, GAMMA), 2 )
-epsilonRate = int( calcRate( data, EPSILON), 2 )
+gammaRate = calcRate(data, GAMMA)
+epsilonRate = calcRate( data, EPSILON)
 oxygenRate = int( calcLSRate( data, OXYGEN ), 2)
 c02Rate = int( calcLSRate( data, CO2 ), 2)
 
-result = gammaRate * epsilonRate
+result = int( gammaRate, 2 ) * int( epsilonRate, 2 )
 lifeSupport = oxygenRate * c02Rate
 
+print( f"Gamma Rate: {gammaRate} ({int(gammaRate, 2)})")
+print( f"Epsilon Rate: {epsilonRate} ({int(epsilonRate, 2)})")
 print( f"Power Consumption: {result}")
-print(f"Life Support: {lifeSupport}")
+print( f"Life Support: {lifeSupport}")
 
 
 
