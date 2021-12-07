@@ -65,39 +65,44 @@ def getCommonValueCriteria( data ):
 
 
 def calcLSRate( data, method ):
-    criteriaList = getCommonValueCriteria(data)
-    criteriaLen = len( criteriaList )
-    
-    print( f"Criteria: {criteriaList}")
-
+    itemLen = len( data[0] )
+ 
     # Test against all the criteria
-    for i in range( criteriaLen ):
-        criteria = criteriaList[i]
+    for i in range( itemLen ):
+        criteriaIndex = i
 
-        # Flip the meaning for CO2
-        if method == CO2:
-            criteria = 1 - criteria
-
-        data = filter(data, criteria, i )
+        data = filter(data, criteriaIndex, i, method )
        
         if len( data ) == 1:
             break
 
-        # Convert it to a string so we can later convert it to a binary number
-        string_ints = [str(int) for int in data[0]]
-        str_of_ints = "".join(string_ints)
+    # Convert it to a string so we can later convert it to a binary number
+    string_ints = [str(int) for int in data[0]]
+    str_of_ints = "".join(string_ints)
+
+    #print(f"Got what I came for: {str_of_ints}")
 
     return str_of_ints
 
   
-def filter( numbers, criteria, position ):
+def filter( numbers, criteriaIndex, position, method ):
     filtered = []
 
+    criteriaList = getCommonValueCriteria(numbers)
+    criteria = 0
+
+   # print(f"Criteria: {criteriaList}")
+
     for number in numbers:
-        if int( number[position]) == criteria:
+        if method == CO2:
+            criteria = 1 - criteriaList[criteriaIndex]
+        else:
+            criteria = criteriaList[criteriaIndex]
+
+        if int(number[position]) == criteria:
             filtered.append( number )
 
-    print( filtered )
+    #print( f"Remaining: {filtered}")
 
     return filtered
 
@@ -135,21 +140,21 @@ def calcRate(numbers, method):
     return resultString
             
 
-f = open("testinput.txt", "r")
+f = open("input.txt", "r")
 lines = f.readlines()
 data = processData( lines )
 
 
 gammaRate = calcRate(data, GAMMA)
 epsilonRate = calcRate( data, EPSILON)
-oxygenRate = int( calcLSRate( data, OXYGEN ), 2)
-c02Rate = int( calcLSRate( data, CO2 ), 2)
+oxygenRate = calcLSRate( data, OXYGEN )
+cO2Rate = calcLSRate( data, CO2 )
 
 result = int( gammaRate, 2 ) * int( epsilonRate, 2 )
-lifeSupport = oxygenRate * c02Rate
+lifeSupport = int(oxygenRate, 2) * int(cO2Rate, 2)
 
-print( f"Gamma Rate: {gammaRate} ({int(gammaRate, 2)})")
-print( f"Epsilon Rate: {epsilonRate} ({int(epsilonRate, 2)})")
+print(f"Oxygen Rate: {oxygenRate} ({int(oxygenRate, 2)})")
+print(f"CO2 Rate: {cO2Rate} ({int(cO2Rate, 2)})")
 print( f"Power Consumption: {result}")
 print( f"Life Support: {lifeSupport}")
 
